@@ -1,0 +1,128 @@
+6.39.41
+
+
+//mongodb database
+username: amitpotdukhe20
+password: cmPUrefrPzB0BIuW
+
+username: jackfrost2001
+password: EhOLjUkP877mRXHs
+
+"email": "Amit25@gmail.com",
+"password": "Amit"
+
+
+Clientexception with socketexception should show Customized message and check for internet connection ---done
+Fields accepting spaces and password validation ----done
+Name validation ----done
+Logout Functionality and login to app after signup ----done
+name validation ----done
+email validation ----done
+
+
+
+
+
+
+
+
+
+
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/material.dart';
+
+class CustomTextField extends StatefulWidget {
+  final TextEditingController controller;
+  final String hintText;
+  final String labelText;
+  final String? semanticsLabel;
+  final int maxLines;
+  final bool obscureText;
+  final Widget? suffixIcon;
+  final String? Function(String?)? customValidator;
+
+  const CustomTextField({
+    Key? key,
+    required this.controller,
+    required this.hintText,
+    required this.labelText,
+    this.semanticsLabel,
+    this.maxLines = 2,
+    this.obscureText = false,
+    this.suffixIcon,
+    this.customValidator,
+  }) : super(key: key);
+
+  @override
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  String? _errorText;
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void validate() {
+    setState(() {
+      Form.of(context)?.validate();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: widget.controller,
+      obscureText: widget.obscureText,
+      focusNode: _focusNode,
+      onChanged: (val) {
+        if (_focusNode.hasFocus) {
+          validate();
+        }
+      },
+      decoration: InputDecoration(
+        hintText: widget.hintText,
+        hintStyle: const TextStyle(
+          color: Color.fromARGB(255, 173, 173, 173),
+          fontWeight: FontWeight.w300,
+        ),
+        labelText: widget.labelText,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        filled: true,
+        fillColor: const Color.fromARGB(207, 255, 255, 255),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50),
+          borderSide: const BorderSide(
+            color: Color.fromARGB(255, 255, 255, 255),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50),
+          borderSide: const BorderSide(
+            color: Color.fromARGB(255, 131, 131, 131),
+          ),
+        ),
+        suffixIcon: widget.suffixIcon,
+        semanticCounterText: widget.semanticsLabel,
+        errorText: _errorText,
+      ),
+      validator: (val) {
+        if (_focusNode.hasFocus) {
+          return widget.customValidator?.call(val);
+        }
+        return null;
+      },
+    );
+  }
+}
