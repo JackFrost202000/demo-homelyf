@@ -4,17 +4,48 @@ const bcryptjs = require("bcryptjs");
 const authRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const auth = require("../middlewares/auth");
+const { sendEmail, generateOTP } = require("../services/util");
+const otpVerification = require("../models/otpVerification");
 
 // SIGN UP
+authRouter.post("/api/sendEmail-otp", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const OTP = generateOTP();
+    const otpBody = await otpVerification.create({ email: email, otp: OTP });
+    console.log(otpBody);
+
+    res.status(200).json({ msg: "OTP sent succesfully" })
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ msg: "Failed to send OTP." })
+  }
+})
+
 authRouter.post("/api/signup", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, otp } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
         .status(400)
         .json({ msg: "User with same email already exists!" });
+    }
+
+    const response = await otpVerification.find({ email }).sort({ createdAt: -1 }).limit(1);
+    console.log(response);
+    if (response.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "The OTP is not valid",
+      });
+    } else if (otp !== response[0].otp) {
+      return res.status(400).json({
+        success: false,
+        message: "The OTP is not valid",
+      });
     }
 
     const hashedPassword = await bcryptjs.hash(password, 8);
@@ -25,7 +56,8 @@ authRouter.post("/api/signup", async (req, res) => {
       name,
     });
     user = await user.save();
-    res.json(user);
+    await sendEmail(email, "", "", "welcome to our platform test email asdnsadijasdn.")
+    res.json({ user });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
