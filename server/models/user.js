@@ -12,6 +12,7 @@ const userSchema = mongoose.Schema({
     type: String,
     trim: true,
   },
+
   password: {
     required: true,
     type: String,
