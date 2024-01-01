@@ -1,11 +1,16 @@
 const express = require("express");
-const User = require("../models/user");
+const User = require("../../models/user");
 const bcryptjs = require("bcryptjs");
+
 const authRouter = express.Router();
 const jwt = require("jsonwebtoken");
-const auth = require("../middlewares/auth");
-const { sendEmail, generateOTP } = require("../services/util");
-const otpVerification = require("../models/otpVerification");
+
+const auth = require("../../middlewares/auth");
+const { sendEmail, generateOTP } = require("../../services/util");
+const otpVerification = require("../../models/otpVerification");
+const googleAuthRouter = require("./googleAuth");
+
+authRouter.use(googleAuthRouter);
 
 // SIGN UP
 authRouter.post("/api/sendEmail-otp", async (req, res) => {
@@ -81,7 +86,13 @@ authRouter.post("/api/signin", async (req, res) => {
       return res.status(400).json({ msg: "Incorrect password." });
     }
 
-    const token = jwt.sign({ id: user._id }, "passwordKey");
+    const token = jwt.sign({ id: user.email }, "passwordKey");
+    // req.user = {
+    //   provider:"simple",
+    //   displayName:user.name,
+    //   email:user.email
+    // }
+
     res.json({ token, ...user._doc });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -108,5 +119,9 @@ authRouter.get("/", auth, async (req, res) => {
   const user = await User.findById(req.user);
   res.json({ ...user._doc, token: req.token });
 });
+authRouter.get("/test", async (req, res) => {
+  res.json({ user: req.user });
+});
+
 
 module.exports = authRouter;
