@@ -95,8 +95,12 @@ class _SignInScreenState extends State<SignInScreen>
                                     if (value == null || value.isEmpty) {
                                       return 'Please Enter Email Address';
                                     }
-                                    if (value.length < 3) {
-                                      return 'Username must be at least 3 characters';
+                                    String emailPattern =
+                                        r'^[a-z0-9\.]+@([a-z0-9]+\.)+[a-z0-9]{2,320}$';
+                                    RegExp regExp = RegExp(emailPattern);
+
+                                    if (!regExp.hasMatch(value)) {
+                                      return 'Please enter a valid email address, only contain letters(a-z), number(0-9), and periods(.) are allowed.';
                                     }
 
                                     return null;

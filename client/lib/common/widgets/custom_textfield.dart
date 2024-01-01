@@ -59,7 +59,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         suffixIcon: widget.suffixIcon,
         semanticCounterText: widget.semanticsLabel,
-        errorMaxLines: 2,
+        errorMaxLines: 5,
       ),
       validator: widget.customValidator ??
           (val) {
