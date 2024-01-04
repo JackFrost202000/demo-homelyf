@@ -21,7 +21,6 @@ authRouter.post("/api/sendEmail-otp", async (req, res) => {
   try {
     const OTP = generateOTP();
     const otpBody = await otpVerification.create({ email: email, otp: OTP });
-    console.log(otpBody);
 
     res.status(200).json({ msg: "OTP sent succesfully" })
   } catch (error) {
