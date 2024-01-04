@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 
 const auth = require("../../middlewares/auth");
 const { sendEmail, generateOTP } = require("../../services/util");
-const otpVerification = require("../../models/otpVerification");
+const otpVerification = require("../../models/Otp");
 const googleAuthRouter = require("./googleAuth");
 
 authRouter.use(googleAuthRouter);
@@ -15,7 +15,9 @@ authRouter.use(googleAuthRouter);
 // SIGN UP
 authRouter.post("/api/sendEmail-otp", async (req, res) => {
   const { email } = req.body;
-
+  if (email == null || email == undefined) {
+    res.status(401).json({ msg: "Failed to send OTP." })
+  }
   try {
     const OTP = generateOTP();
     const otpBody = await otpVerification.create({ email: email, otp: OTP });
@@ -23,33 +25,39 @@ authRouter.post("/api/sendEmail-otp", async (req, res) => {
 
     res.status(200).json({ msg: "OTP sent succesfully" })
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     res.status(401).json({ msg: "Failed to send OTP." })
   }
 })
 
 authRouter.post("/api/signup", async (req, res) => {
   try {
-    const { name, email, password, otp } = req.body;
+    const { name, email, mobile, password, otp } = req.body;
+    console.log(req.body, typeof otp);
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({
+      $or: [
+        { email: email },
+        { mobile: mobile }
+      ]
+    });
     if (existingUser) {
       return res
         .status(400)
-        .json({ msg: "User with same email already exists!" });
+        .json({ msg: "User with same email or mobile already exists!" });
     }
 
     const response = await otpVerification.find({ email }).sort({ createdAt: -1 }).limit(1);
-    console.log(response);
+    console.log("otp is :", response);
     if (response.length === 0) {
       return res.status(400).json({
         success: false,
-        message: "The OTP is not valid",
+        msg: "The OTP is not valid",
       });
-    } else if (otp !== response[0].otp) {
+    } else if (otp != response[0].otp) {
       return res.status(400).json({
         success: false,
-        message: "The OTP is not valid",
+        msg: "The OTP is not valid",
       });
     }
 
@@ -57,13 +65,18 @@ authRouter.post("/api/signup", async (req, res) => {
 
     let user = new User({
       email,
+      mobile,
       password: hashedPassword,
       name,
     });
     user = await user.save();
-    await sendEmail(email, "", "", "welcome to our platform test email asdnsadijasdn.")
-    res.json({ user });
+    await sendEmail(email, "", "", "welcome to homeLyf services.")
+
+    const token = jwt.sign({ id: user.email }, "passwordKey");
+
+    res.json({ user, token });
   } catch (e) {
+    console.log(e);
     res.status(500).json({ error: e.message });
   }
 });
