@@ -95,8 +95,12 @@ class _SignInScreenState extends State<SignInScreen>
                                     if (value == null || value.isEmpty) {
                                       return 'Please Enter Email Address';
                                     }
-                                    if (value.length < 3) {
-                                      return 'Username must be at least 3 characters';
+                                    String emailPattern =
+                                        r'^[a-z0-9\.]+@([a-z0-9]+\.)+[a-z0-9]{2,320}$';
+                                    RegExp regExp = RegExp(emailPattern);
+
+                                    if (!regExp.hasMatch(value)) {
+                                      return 'Please enter a valid email address, only contain letters(a-z), number(0-9), and periods(.) are allowed.';
                                     }
 
                                     return null;
@@ -135,8 +139,10 @@ class _SignInScreenState extends State<SignInScreen>
                                     if (value == null || value.isEmpty) {
                                       return 'Please Enter Password';
                                     }
-                                    if (value.length < 3) {
-                                      return 'Username must be at least 3 characters';
+                                    String errorMessages = validatePassword(
+                                        _passwordController.text);
+                                    if (errorMessages.isNotEmpty) {
+                                      return errorMessages;
                                     }
 
                                     return null;
@@ -247,5 +253,51 @@ class _SignInScreenState extends State<SignInScreen>
         ],
       ),
     );
+  }
+
+  String validatePassword(String password) {
+    List<String> errors = [];
+
+    // Check for minimum length
+    if (password.length < 8) {
+      errors.add("at least 8 characters");
+    }
+
+    // Check for at least one uppercase letter
+    if (!RegExp(r'[A-Z]').hasMatch(password)) {
+      errors.add("at least one uppercase letter");
+    }
+
+    // Check for at least one lowercase letter
+    if (!RegExp(r'[a-z]').hasMatch(password)) {
+      errors.add("at least one lowercase letter");
+    }
+
+    // Check for at least one digit
+    if (!RegExp(r'\d').hasMatch(password)) {
+      errors.add("at least one digit");
+    }
+
+    // Check for at least one special character
+    if (!RegExp(r'[!@#$%^&*()-_+=<>?/[\]{}|]').hasMatch(password)) {
+      errors.add("at least one special character");
+    }
+
+    if (password.contains(' ')) {
+      errors.add("no spaces");
+    }
+
+    if (password.length > 14) {
+      errors.add("at most 14 characters");
+    }
+
+    // Concatenate error messages
+    String errorMessages = errors.join(', ');
+
+    // Return result
+    if (errorMessages.isNotEmpty) {
+      return "Password must contain $errorMessages.";
+    }
+    return '';
   }
 }

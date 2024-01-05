@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:homelyf_services/common/widgets/bottom_bar.dart';
 import 'package:homelyf_services/constants/error_handling.dart';
 import 'package:homelyf_services/constants/global_variables.dart';
@@ -14,6 +16,57 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
+  Future<void> sendOTP(
+    BuildContext context,
+    String email,
+  ) async {
+    try {
+      http.Response res = await http.post(
+        Uri.parse('$uri/api/sendEmail-otp'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{'email': email}),
+      );
+
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200 && data != null) {
+        showSnackBar(context, 'OTP sent successfully!');
+      } else {
+        showSnackBar(context, 'Failed to send OTP. hello');
+      }
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+  }
+
+  Future<bool> verifyOTP(String email, String otp) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$uri/api/verify-otp'),
+        body: jsonEncode({
+          'email': email,
+          'otp': otp,
+        }),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // OTP verification successful
+        return true;
+      } else {
+        // OTP verification failed
+        return false;
+      }
+    } catch (error) {
+      print(error);
+      // Handle network or other errors
+      return false;
+    }
+  }
+
   // sign up user
   void signUpUser({
     required BuildContext context,
@@ -44,20 +97,38 @@ class AuthService {
       httpErrorHandle(
         response: res,
         context: context,
-        onSuccess: () {
+        onSuccess: () async {
           showSnackBar(
             context,
-            'Account created! Login with the same credentials!',
+            "Welcome, ${user.name}! Your home, our priority. Let's get things done!",
+          );
+          await signInUser(
+            context: context,
+            email: email,
+            password: password,
           );
         },
       );
+    } on SocketException catch (e) {
+      // Handle SocketException (connection error)
+      final connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        // No internet connection
+        showSnackBar(context, 'No internet connection.');
+      } else {
+        // Connection error (other than no internet)
+        showSnackBar(context, 'Connection error: ${e.message}');
+      }
+    } on http.ClientException catch (e) {
+      // Handle DioError (Dio-specific exception)
+      showSnackBar(context, 'HTTP request failed: ${e.message}');
     } catch (e) {
       showSnackBar(context, e.toString());
     }
   }
 
   // sign in user
-  void signInUser({
+  Future<void> signInUser({
     required BuildContext context,
     required String email,
     required String password,
@@ -87,6 +158,19 @@ class AuthService {
           );
         },
       );
+    } on SocketException catch (e) {
+      // Handle SocketException (connection error)
+      final connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        // No internet connection
+        showSnackBar(context, 'No internet connection.');
+      } else {
+        // Connection error (other than no internet)
+        showSnackBar(context, 'Connection error: ${e.message}');
+      }
+    } on http.ClientException catch (e) {
+      // Handle DioError (Dio-specific exception)
+      showSnackBar(context, 'HTTP request failed: ${e.message}');
     } catch (e) {
       showSnackBar(context, e.toString());
     }

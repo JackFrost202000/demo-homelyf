@@ -23,7 +23,11 @@ class _SignUpScreenState extends State<SignUpScreen>
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
   bool _passwordObscured = true;
+  bool _isOtpSent = false;
+  bool _isEmailVerified = false;
+  bool _isEmailValid = false;
 
   @override
   void dispose() {
@@ -31,6 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     _emailController.dispose();
     _passwordController.dispose();
     _nameController.dispose();
+    _otpController.dispose();
   }
 
   void signUpUser() {
@@ -40,6 +45,37 @@ class _SignUpScreenState extends State<SignUpScreen>
       password: _passwordController.text,
       name: _nameController.text,
     );
+  }
+
+  void sendOtp() {
+    authService.sendOTP(context, _emailController.text);
+    setState(() {
+      _isOtpSent = true; // Set the flag to indicate OTP has been sent
+    });
+  }
+
+  void verifyEmail() {
+    authService
+        .verifyOTP(_emailController.text, _otpController.text)
+        .then((result) {
+      if (result) {
+        // Email verification successful
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Email Verified Successfully"),
+          backgroundColor: Colors.green,
+        ));
+        setState(() {
+          _isEmailVerified = true;
+          _isOtpSent = false;
+        });
+      } else {
+        // Email verification failed
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Email Verification Failed"),
+          backgroundColor: Colors.red,
+        ));
+      }
+    });
   }
 
   @override
@@ -99,6 +135,19 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   hintText: 'Enter Name',
                                   labelText: 'Name',
                                   semanticsLabel: 'Buyers Name SignUp Input',
+                                  customValidator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please Enter Name';
+                                    }
+                                    String namePattern = r'^[a-zA-Z\ ]{1,30}$';
+                                    RegExp regExp = RegExp(namePattern);
+
+                                    if (!regExp.hasMatch(value)) {
+                                      return 'Please enter a valid name with a maximum length of 30 characters, only letters(a-z, A-Z) are allowed.';
+                                    }
+
+                                    return null;
+                                  },
                                 ),
                                 const SizedBox(
                                   height: 15,
@@ -107,10 +156,86 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   controller: _emailController,
                                   labelText: 'Email Address',
                                   hintText: 'Enter Email Address',
+                                  enabled: !_isEmailVerified,
                                   semanticsLabel: 'Buyers Email SignUp Input',
+                                  customValidator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please Enter Email Address';
+                                    }
+                                    String emailPattern =
+                                        r'^[a-z0-9\.]+@([a-z0-9]+\.)+[a-z0-9]{2,320}$';
+                                    RegExp regExp = RegExp(emailPattern);
+
+                                    if (!regExp.hasMatch(value)) {
+                                      _isEmailValid = true;
+                                      return 'Please enter a valid email address, only contain letters(a-z), number(0-9), and periods(.) are allowed.';
+                                    }
+
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    String emailPattern =
+                                        r'^[a-z0-9\.]+@([a-z0-9]+\.)+[a-z0-9]{2,320}$';
+                                    RegExp regExp = RegExp(emailPattern);
+
+                                    if (regExp.hasMatch(value)) {
+                                      _isEmailValid = true;
+                                      setState(() {});
+                                    }
+                                  },
+                                  suffixIcon: Visibility(
+                                    visible: _isEmailValid,
+                                    child: _isEmailVerified
+                                        ? const Icon(
+                                            Icons.verified_rounded,
+                                            color: Colors.green,
+                                            size: 30,
+                                          )
+                                        : TextButton(
+                                            child: Text(
+                                              'Verify',
+                                              style: TextStyle(
+                                                color: _isOtpSent
+                                                    ? Colors.grey
+                                                    : Theme.of(context)
+                                                        .primaryColor,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              if (_isEmailValid) {
+                                                sendOtp();
+                                              }
+                                            },
+                                          ),
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 15,
+                                ),
+                                CustomTextField(
+                                  controller: _otpController,
+                                  labelText: 'OTP',
+                                  hintText: 'Enter OTP',
+                                  semanticsLabel: 'Buyers OTP SignUp Input',
+                                  visible:
+                                      _isOtpSent, // Only show OTP field if OTP has been sent
+                                ),
+                                Visibility(
+                                  visible: _isOtpSent,
+                                  child: TextButton(
+                                    onPressed: _isOtpSent ? verifyEmail : null,
+                                    child: Text(
+                                      'Verify Email',
+                                      style: TextStyle(
+                                        color: _isEmailVerified
+                                            ? Colors
+                                                .grey // Change the color if OTP has been sent
+                                            : Theme.of(context).primaryColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 CustomTextField(
                                   controller: _passwordController,
@@ -138,6 +263,18 @@ class _SignUpScreenState extends State<SignUpScreen>
                                       },
                                     ),
                                   ),
+                                  customValidator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please Enter Password';
+                                    }
+                                    String errorMessages = validatePassword(
+                                        _passwordController.text);
+                                    if (errorMessages.isNotEmpty) {
+                                      return errorMessages;
+                                    }
+
+                                    return null;
+                                  },
                                 ),
                                 const SizedBox(
                                   height: 15,
@@ -213,5 +350,51 @@ class _SignUpScreenState extends State<SignUpScreen>
         ],
       ),
     );
+  }
+
+  String validatePassword(String password) {
+    List<String> errors = [];
+
+    // Check for minimum length
+    if (password.length < 8) {
+      errors.add("at least 8 characters");
+    }
+
+    // Check for at least one uppercase letter
+    if (!RegExp(r'[A-Z]').hasMatch(password)) {
+      errors.add("at least one uppercase letter");
+    }
+
+    // Check for at least one lowercase letter
+    if (!RegExp(r'[a-z]').hasMatch(password)) {
+      errors.add("at least one lowercase letter");
+    }
+
+    // Check for at least one digit
+    if (!RegExp(r'\d').hasMatch(password)) {
+      errors.add("at least one digit");
+    }
+
+    // Check for at least one special character
+    if (!RegExp(r'[!@#$%^&*()-_+=<>?/[\]{}|]').hasMatch(password)) {
+      errors.add("at least one special character");
+    }
+
+    if (password.contains(' ')) {
+      errors.add("no spaces");
+    }
+
+    if (password.length > 14) {
+      errors.add("at most 14 characters");
+    }
+
+    // Concatenate error messages
+    String errorMessages = errors.join(', ');
+
+    // Return result
+    if (errorMessages.isNotEmpty) {
+      return "Password must contain $errorMessages.";
+    }
+    return '';
   }
 }

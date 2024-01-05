@@ -21,9 +21,17 @@ class _DealOfDayState extends State<DealOfDay> {
     fetchDealOfDay();
   }
 
+  @override
+  void dispose() {
+    // Cancel any ongoing processes (e.g., timers, animations) and clean up resources.
+    super.dispose();
+  }
+
   void fetchDealOfDay() async {
-    product = await homeServices.fetchDealOfDay(context: context);
-    setState(() {});
+    if (mounted) {
+      product = await homeServices.fetchDealOfDay(context: context);
+      setState(() {});
+    }
   }
 
   void navigateToDetailScreen() {

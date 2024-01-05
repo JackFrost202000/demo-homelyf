@@ -10,6 +10,9 @@ class CustomTextField extends StatefulWidget {
   final bool obscureText;
   final Widget? suffixIcon;
   final String? Function(String?)? customValidator;
+  final bool visible;
+  final bool enabled;
+  final void Function(String)? onChanged;
 
   const CustomTextField({
     Key? key,
@@ -21,6 +24,9 @@ class CustomTextField extends StatefulWidget {
     this.obscureText = false,
     this.suffixIcon,
     this.customValidator,
+    this.visible = true,
+    this.enabled = true,
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -30,44 +36,49 @@ class CustomTextField extends StatefulWidget {
 class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget.controller,
-      obscureText: widget.obscureText,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-        hintStyle: const TextStyle(
-          color: Color.fromARGB(255, 173, 173, 173),
-          fontWeight: FontWeight.w300,
-        ),
-        labelText: widget.labelText,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-        filled: true,
-        fillColor: const Color.fromARGB(207, 255, 255, 255),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(50),
-          borderSide: const BorderSide(
-            color: Color.fromARGB(255, 255, 255, 255),
+    return Visibility(
+      visible: widget.visible,
+      child: TextFormField(
+        onChanged: widget.onChanged,
+        enabled: widget.enabled,
+        controller: widget.controller,
+        obscureText: widget.obscureText,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        decoration: InputDecoration(
+          hintText: widget.hintText,
+          hintStyle: const TextStyle(
+            color: Color.fromARGB(255, 173, 173, 173),
+            fontWeight: FontWeight.w300,
           ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(50),
-          borderSide: const BorderSide(
-            color: Color.fromARGB(255, 131, 131, 131),
+          labelText: widget.labelText,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          filled: true,
+          fillColor: const Color.fromARGB(207, 255, 255, 255),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50),
+            borderSide: const BorderSide(
+              color: Color.fromARGB(255, 255, 255, 255),
+            ),
           ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50),
+            borderSide: const BorderSide(
+              color: Color.fromARGB(255, 131, 131, 131),
+            ),
+          ),
+          suffixIcon: widget.suffixIcon,
+          semanticCounterText: widget.semanticsLabel,
+          errorMaxLines: 5,
         ),
-        suffixIcon: widget.suffixIcon,
-        semanticCounterText: widget.semanticsLabel,
-        errorMaxLines: 2,
+        validator: widget.customValidator ??
+            (val) {
+              if (val == null || val.isEmpty) {
+                return 'Please ${widget.hintText}';
+              }
+              return null;
+            },
       ),
-      validator: widget.customValidator ??
-          (val) {
-            if (val == null || val.isEmpty) {
-              return 'Please Enter Email Address';
-            }
-            return null;
-          },
     );
   }
 }

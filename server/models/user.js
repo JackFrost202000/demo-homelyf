@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const bcryptjs = require('bcryptjs');
+
 const { productSchema } = require("./product");
 
 const userSchema = mongoose.Schema({
@@ -11,14 +13,6 @@ const userSchema = mongoose.Schema({
     required: true,
     type: String,
     trim: true,
-    validate: {
-      validator: (value) => {
-        const re =
-          /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-        return value.match(re);
-      },
-      message: "Please enter a valid email address",
-    },
   },
   password: {
     required: true,
@@ -41,6 +35,18 @@ const userSchema = mongoose.Schema({
       },
     },
   ],
+});
+
+userSchema.pre('save', async function (next) {
+  if (this.isModified('password')) {
+    try {
+      const hashedPassword = await bcryptjs.hash(this.password, 8);
+      this.password = hashedPassword;
+    } catch (error) {
+      return next(error);
+    }
+  }
+  next();
 });
 
 const User = mongoose.model("User", userSchema);
