@@ -1,0 +1,18 @@
+POST http://localhost:3000/api/sendEmail-otp
+content-type: application/json
+
+{
+    "email":"potdukheamit@gmail.com"
+}
+
+###
+POST http://localhost:3000/api/signup
+content-type: application/json
+
+{
+    "name":"amit",
+    "email":"potdukheamit@gmail.com",
+    "mobile":"9359846977",
+    "password":"123",
+    "otp":"6975"
+}

@@ -5,8 +5,15 @@ const serviceProviderSchema = new mongoose.Schema({
         type: String
     },
     email: {
-        type: String,
         required: true,
+        unique: true,
+        type: String,
+        trim: true,
+    },
+    mobile: {
+        unique: true,
+        required: true,
+        type: String
     },
     password: {
         type: String
