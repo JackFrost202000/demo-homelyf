@@ -16,3 +16,13 @@ content-type: application/json
     "password":"123",
     "otp":"6975"
 }
+
+###
+POST http://localhost:3000/api/forgotpassword
+content-type: application/json
+
+{
+    "email":"potdukheamit@gmail.com",
+    "newPassword":"12345",
+    "otp":"2153"
+}
