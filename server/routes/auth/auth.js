@@ -207,12 +207,12 @@ authRouter.post("/api/signup", async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcryptjs.hash(password, 10);
+
 
     let user = new User({
       email,
       mobile,
-      password: hashedPassword,
+      password,
       name,
     });
     user = await user.save();

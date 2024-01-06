@@ -1,10 +1,10 @@
 const express = require("express");
 const userRouter = express.Router();
-const auth = require("../middlewares/auth");
-const Order = require("../models/order");
-const { Product } = require("../models/product");
-const User = require("../models/user");
-const { sendMsg } = require("../services/messageService");
+const auth = require("../../middlewares/auth");
+const Order = require("../../models/order");
+const { Product } = require("../../models/product");
+const User = require("../../models/user");
+const { sendMsg } = require("../../services/messageService");
 
 userRouter.post("/api/add-to-cart", auth, async (req, res) => {
   try {

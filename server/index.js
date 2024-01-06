@@ -16,7 +16,7 @@ const app = express();
 const adminRouter = require("./routes/admin");
 const authRouter = require("./routes/auth/auth");
 const productRouter = require("./routes/product");
-const userRouter = require("./routes/user");
+const userRouter = require("./routes/user/user");
 
 // middleware
 app.use(cors());
