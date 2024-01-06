@@ -12,6 +12,50 @@ const googleAuthRouter = require("./googleAuth");
 
 authRouter.use(googleAuthRouter);
 
+const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerUI = require("swagger-ui-express");
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'HomeLyf API Testing',
+      version: '1.0.0',
+    },
+    servers: [
+      {
+        url: 'http://192.168.43.78:3000'
+      }
+    ]
+  },
+  apis: ['./auth.js'], // files containing annotations as above
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+authRouter.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+
+
+/**
+ * @swagger
+ * /api/sendEmail-otp:
+ *   post:
+ *     summary: Send OTP via email
+ *     description: Send OTP to the provided email address for verification.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: OTP sent successfully
+ *       401:
+ *         description: Failed to send OTP
+ */
 authRouter.post("/api/sendEmail-otp", async (req, res) => {
   const { email } = req.body;
 
@@ -51,6 +95,29 @@ authRouter.post("/api/sendEmail-otp", async (req, res) => {
 //   }
 // });
 
+/**
+ * @swagger
+ * /api/verify-otp:
+ *   post:
+ *     summary: Verify OTP
+ *     description: Verify the OTP sent to the user's email address.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               otp:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: OTP verified successfully
+ *       400:
+ *         description: Invalid OTP
+ */
 authRouter.post('/api/verify-otp', async (req, res) => {
   const { email, otp } = req.body;
 
@@ -80,7 +147,35 @@ authRouter.post('/api/verify-otp', async (req, res) => {
   }
 });
 
-// SIGN UP
+/**
+ * @swagger
+ * /api/signup:
+ *   post:
+ *     summary: User Sign Up
+ *     description: Register a new user account.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               mobile:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               otp:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User signed up successfully
+ *       400:
+ *         description: Invalid data or user already exists
+ */
 authRouter.post("/api/signup", async (req, res) => {
   try {
     const { name, email, mobile, password, otp } = req.body;
@@ -92,7 +187,7 @@ authRouter.post("/api/signup", async (req, res) => {
         { mobile: mobile }
       ]
     });
-    if (existingUser || existingUser.length > 0) {
+    if (existingUser) {
       return res
         .status(400)
         .json({ msg: "User with same email or mobile already exists!" });
@@ -125,15 +220,36 @@ authRouter.post("/api/signup", async (req, res) => {
 
     const token = jwt.sign({ id: user.email }, "passwordKey");
 
-    res.status(201).json({ user, token });
+    res.json({ token, ...user._doc });
   } catch (e) {
     console.log(e);
     res.status(500).json({ error: e.message });
   }
 });
 
-// Sign In Route
-// Exercise
+/**
+ * @swagger
+ * /api/signin:
+ *   post:
+ *     summary: User Sign In
+ *     description: Authenticate a user and generate an access token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User signed in successfully
+ *       400:
+ *         description: Incorrect email or password
+ */
 authRouter.post("/api/signin", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -157,9 +273,35 @@ authRouter.post("/api/signin", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/forgotpassword:
+ *   post:
+ *     summary: Forgot Password
+ *     description: Reset the user's password using OTP.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *               otp:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *       400:
+ *         description: Invalid email, OTP, or failed to update password
+ */
 authRouter.post("/api/forgotpassword", async (req, res) => {
   try {
     const { email, newPassword, otp } = req.body;
+    console.log(email, newPassword, otp);
     if (!email || !newPassword || !otp) {
       return res.status(400).json({ msg: "Enter valid email or password." })
     }

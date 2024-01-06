@@ -1,9 +1,12 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class User {
   final String id;
   final String name;
   final String email;
+  final String mobile;
+  final String otp;
   final String password;
   final String address;
   final String type;
@@ -14,6 +17,8 @@ class User {
     required this.id,
     required this.name,
     required this.email,
+    required this.mobile,
+    required this.otp,
     required this.password,
     required this.address,
     required this.type,
@@ -26,6 +31,8 @@ class User {
       'id': id,
       'name': name,
       'email': email,
+      'mobile': mobile,
+      'otp': otp,
       'password': password,
       'address': address,
       'type': type,
@@ -39,6 +46,8 @@ class User {
       id: map['_id'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
+      mobile: map['mobile'] ?? '',
+      otp: map['otp'] ?? '',
       password: map['password'] ?? '',
       address: map['address'] ?? '',
       type: map['type'] ?? '',
@@ -59,6 +68,8 @@ class User {
     String? id,
     String? name,
     String? email,
+    String? mobile,
+    String? otp,
     String? password,
     String? address,
     String? type,
@@ -69,6 +80,8 @@ class User {
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
+      mobile: mobile ?? this.mobile,
+      otp: otp ?? this.otp,
       password: password ?? this.password,
       address: address ?? this.address,
       type: type ?? this.type,

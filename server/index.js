@@ -5,6 +5,10 @@ const cors = require("cors");
 const session = require('express-session');
 const passport = require('passport');
 
+//SWAGGER DOCS
+const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerUI = require("swagger-ui-express");
+
 const app = express();
 
 // IMPORTS FROM OTHER FILES
@@ -42,6 +46,25 @@ mongoose
   .catch((e) => {
     console.log(e);
   });
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'HomeLyf API Testing',
+      version: '1.0.0',
+    },
+    servers: [
+      {
+        url: 'http://localhost:3000'
+      }
+    ]
+  },
+  apis: ['./routes/auth/*.js'],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`connected at port ${PORT}`);

@@ -76,7 +76,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   height: 42,
                   margin: const EdgeInsets.only(left: 15),
                   child: Material(
-                    borderRadius: BorderRadius.circular(7),
+                    borderRadius: BorderRadius.circular(50),
                     elevation: 1,
                     child: TextFormField(
                       onFieldSubmitted: navigateToSearchScreen,
@@ -88,7 +88,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               left: 6,
                             ),
                             child: Icon(
-                              Icons.search,
+                              Icons.search_rounded,
                               color: Colors.black,
                               size: 23,
                             ),
@@ -99,20 +99,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         contentPadding: const EdgeInsets.only(top: 10),
                         border: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(
-                            Radius.circular(7),
+                            Radius.circular(50),
                           ),
                           borderSide: BorderSide.none,
                         ),
                         enabledBorder: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(
-                            Radius.circular(7),
+                            Radius.circular(50),
                           ),
                           borderSide: BorderSide(
-                            color: Colors.black38,
+                            color: Color.fromARGB(0, 255, 255, 255),
                             width: 1,
                           ),
                         ),
-                        hintText: 'Search Amazon.in',
+                        hintText: 'Search Services',
                         hintStyle: const TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 17,

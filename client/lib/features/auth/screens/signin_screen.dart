@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:homelyf_services/common/widgets/custom_button.dart';
 import 'package:homelyf_services/common/widgets/custom_textfield.dart';
+import 'package:homelyf_services/features/auth/screens/forgot_password_rename.dart';
 import 'package:homelyf_services/features/auth/screens/signup_screen.dart';
 import 'package:homelyf_services/features/auth/services/auth_service.dart';
 
@@ -95,13 +96,13 @@ class _SignInScreenState extends State<SignInScreen>
                                     if (value == null || value.isEmpty) {
                                       return 'Please Enter Email Address';
                                     }
-                                    String emailPattern =
-                                        r'^[a-z0-9\.]+@([a-z0-9]+\.)+[a-z0-9]{2,320}$';
-                                    RegExp regExp = RegExp(emailPattern);
+                                    // String emailPattern =
+                                    //     r'^[a-z0-9\.]+@([a-z0-9]+\.)+[a-z0-9]{2,320}$';
+                                    // RegExp regExp = RegExp(emailPattern);
 
-                                    if (!regExp.hasMatch(value)) {
-                                      return 'Please enter a valid email address, only contain letters(a-z), number(0-9), and periods(.) are allowed.';
-                                    }
+                                    // if (!regExp.hasMatch(value)) {
+                                    //   return 'Please enter a valid email address, only contain letters(a-z), number(0-9), and periods(.) are allowed.';
+                                    // }
 
                                     return null;
                                   },
@@ -139,11 +140,11 @@ class _SignInScreenState extends State<SignInScreen>
                                     if (value == null || value.isEmpty) {
                                       return 'Please Enter Password';
                                     }
-                                    String errorMessages = validatePassword(
-                                        _passwordController.text);
-                                    if (errorMessages.isNotEmpty) {
-                                      return errorMessages;
-                                    }
+                                    // String errorMessages = validatePassword(
+                                    //     _passwordController.text);
+                                    // if (errorMessages.isNotEmpty) {
+                                    //   return errorMessages;
+                                    // }
 
                                     return null;
                                   },
@@ -154,12 +155,24 @@ class _SignInScreenState extends State<SignInScreen>
                                 Container(
                                   alignment: Alignment.centerRight,
                                   padding: const EdgeInsets.only(right: 12),
-                                  child: const Text(
-                                    'Forgot Password?',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color.fromARGB(255, 0, 0, 0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return const ForgotPasswordScreen();
+                                      }));
+                                    },
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 0, horizontal: 8),
+                                      child: Text(
+                                        'Forgot Password?',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -223,22 +236,22 @@ class _SignInScreenState extends State<SignInScreen>
                                     ),
                                   ],
                                 ),
-                                const Text(
-                                  "Or",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromARGB(255, 95, 94, 94),
-                                  ),
-                                ),
-                                const Text(
-                                  "Sign up with social account",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromARGB(255, 95, 94, 94),
-                                  ),
-                                ),
+                                // const Text(
+                                //   "Or",
+                                //   style: TextStyle(
+                                //     fontSize: 15,
+                                //     fontWeight: FontWeight.w600,
+                                //     color: Color.fromARGB(255, 95, 94, 94),
+                                //   ),
+                                // ),
+                                // const Text(
+                                //   "Sign up with social account",
+                                //   style: TextStyle(
+                                //     fontSize: 15,
+                                //     fontWeight: FontWeight.w600,
+                                //     color: Color.fromARGB(255, 95, 94, 94),
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),

@@ -9,6 +9,7 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onTap;
   final double? height;
   final double? elevation;
+  final bool visible;
 
   const CustomButton({
     Key? key,
@@ -17,23 +18,27 @@ class CustomButton extends StatelessWidget {
     required this.onTap,
     this.height,
     this.elevation,
+    this.visible = true,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final Color buttonColor = backgroundColor ?? GlobalVariables.secondaryColor;
-    return ElevatedButton(
-      onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        minimumSize: Size(double.infinity, height ?? 50),
-        backgroundColor: buttonColor,
-        elevation: elevation ?? 0,
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 18,
+    return Visibility(
+      visible: visible,
+      child: ElevatedButton(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size(double.infinity, height ?? 50),
+          backgroundColor: buttonColor,
+          elevation: elevation ?? 0,
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+          ),
         ),
       ),
     );

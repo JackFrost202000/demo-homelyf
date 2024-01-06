@@ -7,23 +7,23 @@ import 'package:homelyf_services/constants/utils.dart';
 import 'package:homelyf_services/features/auth/screens/signin_screen.dart';
 import 'package:homelyf_services/features/auth/services/auth_service.dart';
 
-enum Auth { signup }
-
-class SignUpScreen extends StatefulWidget {
-  static const String routeName = '/signup-screen';
-  const SignUpScreen({super.key});
+class ForgotPasswordScreen extends StatefulWidget {
+  static const String routeName = '/forgot-password';
+  const ForgotPasswordScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen>
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     with TickerProviderStateMixin {
   final _signUpFormKey = GlobalKey<FormState>();
   final AuthService authService = AuthService();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   bool _passwordObscured = true;
@@ -40,13 +40,11 @@ class _SignUpScreenState extends State<SignUpScreen>
     _mobileController.dispose();
   }
 
-  void signUpUser() {
-    authService.signUpUser(
+  void forgotPassword() {
+    authService.forgotPassword(
       context: context,
       email: _emailController.text,
-      password: _passwordController.text,
-      name: _nameController.text,
-      mobile: _mobileController.text,
+      newPassword: _passwordController.text,
       otp: _otpController.text,
     );
   }
@@ -128,37 +126,23 @@ class _SignUpScreenState extends State<SignUpScreen>
                             child: Column(
                               children: [
                                 const Text(
-                                  'Sign Up',
+                                  'Forgot',
                                   style: TextStyle(
-                                    fontSize: 35,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 0, 145, 203),
+                                  ),
+                                ),
+                                const Text(
+                                  'Password',
+                                  style: TextStyle(
+                                    fontSize: 30,
                                     fontWeight: FontWeight.bold,
                                     color: Color.fromARGB(255, 0, 145, 203),
                                   ),
                                 ),
                                 const SizedBox(
                                   height: 20,
-                                ),
-                                CustomTextField(
-                                  controller: _nameController,
-                                  hintText: 'Enter Name',
-                                  labelText: 'Name',
-                                  semanticsLabel: 'Buyers Name SignUp Input',
-                                  customValidator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Enter Name';
-                                    }
-                                    String namePattern = r'^[a-zA-Z\ ]{1,30}$';
-                                    RegExp regExp = RegExp(namePattern);
-
-                                    if (!regExp.hasMatch(value)) {
-                                      return 'Please enter a valid name with a maximum length of 30 characters, only letters(a-z, A-Z) are allowed.';
-                                    }
-
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(
-                                  height: 15,
                                 ),
                                 CustomTextField(
                                   controller: _emailController,
@@ -191,40 +175,39 @@ class _SignUpScreenState extends State<SignUpScreen>
                                       setState(() {});
                                     }
                                   },
-                                  suffixIcon: Visibility(
-                                    visible: _isEmailValid,
-                                    child: _isEmailVerified
-                                        ? const Padding(
-                                            padding:
-                                                EdgeInsets.only(right: 10.0),
-                                            child: Icon(
-                                              Icons.verified_rounded,
-                                              color: Colors.green,
-                                              size: 20,
-                                            ),
-                                          )
-                                        : Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 10.0),
-                                            child: TextButton(
-                                              child: Text(
-                                                'Verify',
-                                                style: TextStyle(
-                                                  color: _isOtpSent
-                                                      ? Colors.grey
-                                                      : Theme.of(context)
-                                                          .primaryColor,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                if (_isEmailValid) {
-                                                  sendOtp();
-                                                }
-                                              },
-                                            ),
+                                ),
+                                Visibility(
+                                  visible: _isEmailValid,
+                                  child: _isEmailVerified
+                                      ? const Padding(
+                                          padding: EdgeInsets.only(right: 10.0),
+                                          child: Icon(
+                                            Icons.verified_rounded,
+                                            color: Colors.green,
+                                            size: 20,
                                           ),
-                                  ),
+                                        )
+                                      : Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 10.0),
+                                          child: TextButton(
+                                            child: Text(
+                                              'Send OTP',
+                                              style: TextStyle(
+                                                color: _isOtpSent
+                                                    ? Colors.grey
+                                                    : Theme.of(context)
+                                                        .primaryColor,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              if (_isEmailValid) {
+                                                sendOtp();
+                                              }
+                                            },
+                                          ),
+                                        ),
                                 ),
                                 const SizedBox(
                                   height: 15,
@@ -242,7 +225,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   child: TextButton(
                                     onPressed: _isOtpSent ? verifyEmail : null,
                                     child: Text(
-                                      'Verify Email',
+                                      'Verify OTP',
                                       style: TextStyle(
                                         color: _isEmailVerified
                                             ? Colors
@@ -253,31 +236,54 @@ class _SignUpScreenState extends State<SignUpScreen>
                                     ),
                                   ),
                                 ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
                                 CustomTextField(
-                                  controller: _mobileController,
-                                  hintText: 'Enter Mobile Number',
-                                  labelText: 'Mobile No.',
-                                  semanticsLabel: 'Buyers Mobile SignUp Input',
+                                  visible: _isEmailVerified,
+                                  controller: _passwordController,
+                                  labelText: 'New Password',
+                                  hintText: 'Enter New Password',
+                                  semanticsLabel:
+                                      'Buyers New Password SignUp Input',
+                                  obscureText: _passwordObscured,
+                                  suffixIcon: Padding(
+                                    padding: const EdgeInsets.only(right: 10.0),
+                                    child: IconButton(
+                                      icon: Icon(
+                                        _passwordObscured
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        color:
+                                            const Color.fromARGB(136, 0, 0, 0),
+                                        size: 20,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _passwordObscured =
+                                              !_passwordObscured;
+                                        });
+                                      },
+                                    ),
+                                  ),
                                   customValidator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please Enter Mobile No.';
+                                      return 'Please Enter New Password';
                                     }
-                                    String namePattern = r'^[0-9\ ]{1,10}$';
-                                    RegExp regExp = RegExp(namePattern);
-
-                                    if (!regExp.hasMatch(value)) {
-                                      return 'Please enter a valid mobile no.';
+                                    String errorMessages = validatePassword(
+                                        _passwordController.text);
+                                    if (errorMessages.isNotEmpty) {
+                                      return errorMessages;
                                     }
 
                                     return null;
                                   },
                                 ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
+                                SizedBox(height: 15),
                                 CustomTextField(
-                                  controller: _passwordController,
-                                  labelText: 'Password',
+                                  visible: _isEmailVerified,
+                                  controller: _confirmPasswordController,
+                                  labelText: 'Confirm Password',
                                   hintText: 'Enter Password',
                                   semanticsLabel:
                                       'Buyers Password SignUp Input',
@@ -318,7 +324,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   height: 15,
                                 ),
                                 CustomButton(
-                                  text: 'Sign Up',
+                                  visible: _isEmailVerified,
+                                  text: 'Change Password',
                                   backgroundColor:
                                       const Color.fromARGB(255, 96, 173, 211),
                                   height: 60,
@@ -329,53 +336,20 @@ class _SignUpScreenState extends State<SignUpScreen>
                                           'Please verify Email Address');
                                     } else if (_signUpFormKey.currentState!
                                         .validate()) {
-                                      signUpUser();
+                                      // Check if passwords match
+                                      if (_passwordController.text !=
+                                          _confirmPasswordController.text) {
+                                        showSnackBar(context,
+                                            'Passwords do not match. Please make sure both passwords are identical.');
+                                      } else {
+                                        // Passwords match, call forgotPassword function
+                                        forgotPassword();
+                                      }
                                     }
                                   },
                                 ),
                                 const SizedBox(
                                   height: 8,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      'Already Have An Account?',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color.fromARGB(255, 95, 94, 94),
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder: (context) {
-                                          return const SignInScreen();
-                                        }));
-                                      },
-                                      style: ButtonStyle(
-                                        padding: MaterialStateProperty.all<
-                                            EdgeInsetsGeometry>(
-                                          const EdgeInsets.symmetric(
-                                              vertical: 0, horizontal: 4),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'Sign In',
-                                        style: TextStyle(
-                                          color:
-                                              Color.fromARGB(255, 96, 173, 211),
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          decoration: TextDecoration.underline,
-                                          decorationColor:
-                                              Color.fromARGB(255, 96, 173, 211),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
                                 ),
                               ],
                             ),

@@ -47,71 +47,75 @@ class _BottomBarState extends State<BottomBar> {
         onTap: updatePage,
         items: [
           // HOME
-          BottomNavigationBarItem(
-            icon: Container(
-              width: bottomBarWidth,
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: _page == 0
-                        ? GlobalVariables.selectedNavBarColor
-                        : GlobalVariables.backgroundColor,
-                    width: bottomBarBorderWidth,
-                  ),
-                ),
-              ),
-              child: const Icon(
-                Icons.home_outlined,
-              ),
+          const BottomNavigationBarItem(
+            // icon: Container(
+            //   width: bottomBarWidth,
+            // decoration: BoxDecoration(
+            //   border: Border(
+            //     top: BorderSide(
+            //       color: _page == 0
+            //           ? GlobalVariables.selectedNavBarColor
+            //           : GlobalVariables.backgroundColor,
+            //       width: bottomBarBorderWidth,
+            //     ),
+            //   ),
+            // ),
+            icon: Icon(
+              Icons.home_rounded,
             ),
-            label: '',
+            // ),
+            label: 'Home',
           ),
           // ACCOUNT
           BottomNavigationBarItem(
             icon: Container(
               width: bottomBarWidth,
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: _page == 1
-                        ? GlobalVariables.selectedNavBarColor
-                        : GlobalVariables.backgroundColor,
-                    width: bottomBarBorderWidth,
-                  ),
-                ),
-              ),
+              // decoration: BoxDecoration(
+              //   border: Border(
+              //     top: BorderSide(
+              //       color: _page == 1
+              //           ? GlobalVariables.selectedNavBarColor
+              //           : GlobalVariables.backgroundColor,
+              //       width: bottomBarBorderWidth,
+              //     ),
+              //   ),
+              // ),
               child: const Icon(
-                Icons.person_outline_outlined,
+                Icons.person_sharp,
               ),
             ),
-            label: '',
+            label: 'Account',
           ),
           // CART
           BottomNavigationBarItem(
             icon: Container(
-              width: bottomBarWidth,
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: _page == 2
-                        ? GlobalVariables.selectedNavBarColor
-                        : GlobalVariables.backgroundColor,
-                    width: bottomBarBorderWidth,
-                  ),
-                ),
-              ),
+              // width: bottomBarWidth,
+              // decoration: BoxDecoration(
+              //   border: Border(
+              //     top: BorderSide(
+              //       color: _page == 2
+              //           ? GlobalVariables.selectedNavBarColor
+              //           : GlobalVariables.backgroundColor,
+              //       width: bottomBarBorderWidth,
+              //     ),
+              //   ),
+              // ),
               child: badges.Badge(
                 badgeStyle: const badges.BadgeStyle(
-                  badgeColor: Colors.white,
+                  badgeColor: Colors.red,
                   elevation: 0,
                 ),
-                badgeContent: Text(userCartLen.toString()),
+                badgeContent: Text(
+                  userCartLen.toString(),
+                  style: const TextStyle(color: Colors.white),
+                ),
+                position: badges.BadgePosition.custom(top: -10, end: -6),
                 child: const Icon(
-                  Icons.shopping_cart_outlined,
+                  Icons.shopping_cart_rounded,
                 ),
               ),
             ),
-            label: '',
+            label: 'Cart',
           ),
         ],
       ),

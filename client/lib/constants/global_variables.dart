@@ -6,25 +6,25 @@ class GlobalVariables {
   // COLORS
   static const appBarGradient = LinearGradient(
     colors: [
-      Color.fromARGB(255, 29, 201, 192),
-      Color.fromARGB(255, 125, 221, 216),
+      Color.fromARGB(255, 213, 222, 239),
+      Color.fromARGB(255, 213, 222, 239),
     ],
     stops: [0.5, 1.0],
   );
 
-  static const secondaryColor = Color.fromARGB(255, 96, 173, 211);
+  static const secondaryColor = Color.fromARGB(255, 86, 145, 255);
   static const backgroundColor = Colors.white;
   static const Color greyBackgroundCOlor = Color(0xffebecee);
-  static var selectedNavBarColor = Colors.cyan[800]!;
+  static var selectedNavBarColor = const Color.fromARGB(255, 46, 119, 255);
   static const unselectedNavBarColor = Colors.black87;
 
   // STATIC IMAGES
   static const List<String> carouselImages = [
-    'https://images-eu.ssl-images-amazon.com/images/G/31/img21/Wireless/WLA/TS/D37847648_Accessories_savingdays_Jan22_Cat_PC_1500.jpg',
-    'https://images-eu.ssl-images-amazon.com/images/G/31/img2021/Vday/bwl/English.jpg',
-    'https://images-eu.ssl-images-amazon.com/images/G/31/img22/Wireless/AdvantagePrime/BAU/14thJan/D37196025_IN_WL_AdvantageJustforPrime_Jan_Mob_ingress-banner_1242x450.jpg',
-    'https://images-na.ssl-images-amazon.com/images/G/31/Symbol/2020/00NEW/1242_450Banners/PL31_copy._CB432483346_.jpg',
-    'https://images-na.ssl-images-amazon.com/images/G/31/img21/shoes/September/SSW/pc-header._CB641971330_.jpg',
+    'https://englandscoast.com/inc/img/cache/media/ZqmWZEOXtv4HyFe4On9lO7gNvLU6z0Kb0yt2cyg3-image(1500x500-crop).jpeg',
+    'https://s3.amazonaws.com/mychurchwebsite/images/c6938/hl_bp6c5b_crop.jpg',
+    'https://theyamazakihome.com/cdn/shop/collections/nav2_256x256_19952094-967b-4d08-80f7-ac893994896f.png?v=1667248610',
+    'https://www.wf-vision.com/wp-content/uploads/2021/02/01ThymeHohokusHomeOfficeFull_10PeterRymwid-1500x500.jpg',
+    'https://theyamazakihome-europe.com/cdn/shop/files/Shop_All_Collections_3x1_round1.jpg?v=1659444353',
   ];
 
   static const List<Map<String, String>> categoryImages = [

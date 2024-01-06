@@ -8,6 +8,7 @@ import 'package:homelyf_services/common/widgets/bottom_bar.dart';
 import 'package:homelyf_services/constants/error_handling.dart';
 import 'package:homelyf_services/constants/global_variables.dart';
 import 'package:homelyf_services/constants/utils.dart';
+import 'package:homelyf_services/features/auth/screens/signin_screen.dart';
 import 'package:homelyf_services/models/user.dart';
 import 'package:homelyf_services/providers/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +74,8 @@ class AuthService {
     required String email,
     required String password,
     required String name,
+    required String mobile,
+    required String otp,
   }) async {
     try {
       User user = User(
@@ -80,8 +83,10 @@ class AuthService {
         name: name,
         password: password,
         email: email,
+        mobile: mobile,
         address: '',
         type: '',
+        otp: otp,
         token: '',
         cart: [],
       );
@@ -102,10 +107,13 @@ class AuthService {
             context,
             "Welcome, ${user.name}! Your home, our priority. Let's get things done!",
           );
-          await signInUser(
-            context: context,
-            email: email,
-            password: password,
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          Provider.of<UserProvider>(context, listen: false).setUser(res.body);
+          await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            BottomBar.routeName,
+            (route) => false,
           );
         },
       );
@@ -210,6 +218,54 @@ class AuthService {
         var userProvider = Provider.of<UserProvider>(context, listen: false);
         userProvider.setUser(userRes.body);
       }
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+  }
+
+  Future<void> forgotPassword({
+    required BuildContext context,
+    required String email,
+    required String newPassword,
+    required String otp,
+  }) async {
+    try {
+      http.Response res = await http.post(
+        Uri.parse('$uri/api/forgotpassword'),
+        body: jsonEncode({
+          'email': email,
+          'newPassword': newPassword,
+          'otp': otp,
+        }),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () async {
+          showSnackBar(context, 'Password Successfully Changed');
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            SignInScreen.routeName,
+            (route) => false,
+          );
+        },
+      );
+    } on SocketException catch (e) {
+      // Handle SocketException (connection error)
+      final connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        // No internet connection
+        showSnackBar(context, 'No internet connection.');
+      } else {
+        // Connection error (other than no internet)
+        showSnackBar(context, 'Connection error: ${e.message}');
+      }
+    } on http.ClientException catch (e) {
+      // Handle DioError (Dio-specific exception)
+      showSnackBar(context, 'HTTP request failed: ${e.message}');
     } catch (e) {
       showSnackBar(context, e.toString());
     }
