@@ -2,6 +2,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const User = require('../../models/user');
 
 // const ServiceProviderModel = require('../../models/ServiceProvider');
 const router = express.Router();
@@ -15,16 +16,22 @@ passport.use(new GoogleStrategy({
     async function (request, accessToken, refreshToken, profile, done) {
         console.log("in callback, ", profile.displayName, profile.email);
         console.log(accessToken, refreshToken);
-        const existingUser = await ServiceProviderModel.find({ email: profile.email });
-        console.log("ex : ", existingUser);
-        if (!existingUser || existingUser.length == 0) {
-            let user = new ServiceProviderModel({
-                name: profile.displayName,
-                email: profile.email,
-            });
-            await user.save();
+
+        try {
+            const existingUser = await User.find({ email: profile.email });
+            console.log("ex : ", existingUser);
+            if (!existingUser || existingUser.length == 0) {
+                let user = new User({
+                    name: profile.displayName,
+                    email: profile.email,
+                });
+                await user.save();
+            }
+            return done(null, profile);
+        } catch (error) {
+
         }
-        return done(null, profile);
+
     })
 );
 
@@ -46,12 +53,12 @@ router.get('/auth/google',
 
 router.get('/auth/google/callback',
     passport.authenticate('google', {
-        successRedirect: '/protected',
+        successRedirect: '/auth/google/success',
         failureRedirect: '/auth/google/failure'
     })
 );
 
-router.get('/protected', (req, res) => {
+router.get('/auth/google/success', (req, res) => {
 
     console.log(req.user.displayName);
     try {
