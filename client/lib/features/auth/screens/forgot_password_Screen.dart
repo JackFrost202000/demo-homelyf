@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:homelyf_services/common/widgets/custom_button.dart';
 import 'package:homelyf_services/common/widgets/custom_textfield.dart';
 import 'package:homelyf_services/constants/utils.dart';
-import 'package:homelyf_services/features/auth/screens/signin_screen.dart';
 import 'package:homelyf_services/features/auth/services/auth_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -164,7 +163,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 
                                     if (regExp.hasMatch(value)) {
                                       _isEmailValid = true;
-                                      setState(() {});
+                                      setState(() {
+                                        _isOtpSent = false;
+                                      });
                                     }
                                   },
                                 ),

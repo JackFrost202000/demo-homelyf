@@ -188,7 +188,9 @@ class _SignUpScreenState extends State<SignUpScreen>
 
                                     if (regExp.hasMatch(value)) {
                                       _isEmailValid = true;
-                                      setState(() {});
+                                      setState(() {
+                                        _isOtpSent = false;
+                                      });
                                     }
                                   },
                                   suffixIcon: Visibility(
