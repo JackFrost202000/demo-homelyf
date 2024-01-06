@@ -7,9 +7,9 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 
 passport.use(new GoogleStrategy({
-    clientID: "73353886650-db7au5djskleefu1ku11ehip5809s3h6.apps.googleusercontent.com",
-    clientSecret: "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",
-    callbackURL: "http://localhost:3000/auth/google/callback",
+    clientID: process.env.GOOGLEAUTH_CLIENT_ID,
+    clientSecret: process.env.GOOGLEAUTH_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLEAUTH_CALLBACK_URL,
     passReqToCallback: true,
 },
     async function (request, accessToken, refreshToken, profile, done) {
@@ -56,7 +56,7 @@ router.get('/protected', (req, res) => {
     console.log(req.user.displayName);
     try {
         const { displayName, email } = req.user;
-        const token = jwt.sign({ id: req.user.email }, "passwordKey");
+        const token = jwt.sign({ id: req.user.email }, process.env.JWT_KEY);
         res.status(200).json({ token, name: displayName, email: email })
     } catch (error) {
         console.log(error);

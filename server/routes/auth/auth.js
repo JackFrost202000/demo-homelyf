@@ -207,7 +207,7 @@ authRouter.post("/api/signup", async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcryptjs.hash(password, 8);
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     let user = new User({
       email,
@@ -218,7 +218,7 @@ authRouter.post("/api/signup", async (req, res) => {
     user = await user.save();
     await sendEmail(email, "", "", "welcome to homeLyf services.")
 
-    const token = jwt.sign({ id: user.email }, "passwordKey");
+    const token = jwt.sign({ id: user.email }, process.env.JWT_KEY);
 
     res.json({ token, ...user._doc });
   } catch (e) {
@@ -260,13 +260,16 @@ authRouter.post("/api/signin", async (req, res) => {
         .status(400)
         .json({ msg: "User with this email does not exist!" });
     }
+    console.log(user.password, password);
+    console.log(bcryptjs.decodeBase64(user.password, 10));
 
     const isMatch = await bcryptjs.compare(password, user.password);
+    console.log(isMatch);
     if (!isMatch) {
       return res.status(400).json({ msg: "Incorrect password." });
     }
 
-    const token = jwt.sign({ id: user._id }, "passwordKey");
+    const token = jwt.sign({ id: user._id }, process.env.JWT_KEY);
     res.json({ token, ...user._doc });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -340,7 +343,7 @@ authRouter.post("/tokenIsValid", async (req, res) => {
   try {
     const token = req.header("x-auth-token");
     if (!token) return res.json(false);
-    const verified = jwt.verify(token, "passwordKey");
+    const verified = jwt.verify(token, process.env.JWT_KEY);
     if (!verified) return res.json(false);
 
     const user = await User.findById(verified.id);

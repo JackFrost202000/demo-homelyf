@@ -2,7 +2,7 @@ POST http://localhost:3000/api/sendEmail-otp
 content-type: application/json
 
 {
-    "email":"potdukheamit@gmail.com"
+    "email":"potduksheamit@gsmail.com"
 }
 
 ###
@@ -11,10 +11,10 @@ content-type: application/json
 
 {
     "name":"amit",
-    "email":"potdukheamit@gmail.com",
-    "mobile":"9359846977",
+    "email":"potduksheamit@gsmail.com",
+    "mobile":"935984269777",
     "password":"123",
-    "otp":"6975"
+    "otp":"3630"
 }
 
 ###
@@ -26,3 +26,22 @@ content-type: application/json
     "newPassword":"12345",
     "otp":"2153"
 }
+
+###
+POST http://localhost:3000/api/verify-otp
+content-type: application/json
+
+{
+    "email":"potdukheamit@gmail.com",
+    "otp":"2153"
+}
+
+###
+POST http://localhost:3000/api/signin
+content-type: application/json
+
+{
+    "email":"potduksheamit@gsmail.com",
+    "password":"123"
+}
+

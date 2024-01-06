@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const session = require('express-session');
 const passport = require('passport');
+require('dotenv').config();
 
 //SWAGGER DOCS
 const swaggerJSDoc = require("swagger-jsdoc");
@@ -32,8 +33,7 @@ app.use(userRouter);
 // INIT
 const PORT = process.env.PORT || 3000;
 
-const DB =
-  "mongodb+srv://jackfrost2001:EhOLjUkP877mRXHs@cluster0.wnjkzcd.mongodb.net/?retryWrites=true&w=majority";
+const DB = process.env.MONGO_URI;
 
 
 
