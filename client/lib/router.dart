@@ -2,7 +2,7 @@ import 'package:homelyf_services/common/widgets/bottom_bar.dart';
 import 'package:homelyf_services/features/address/screens/address_screen.dart';
 import 'package:homelyf_services/features/admin/screens/add_product_screen.dart';
 import 'package:homelyf_services/features/auth/screens/auth_screen.dart';
-import 'package:homelyf_services/features/auth/screens/forgot_password_rename.dart';
+import 'package:homelyf_services/features/auth/screens/forgot_password_Screen.dart';
 import 'package:homelyf_services/features/auth/screens/signin_screen.dart';
 import 'package:homelyf_services/features/auth/screens/signup_screen.dart';
 import 'package:homelyf_services/features/home/screens/category_deals_screen.dart';

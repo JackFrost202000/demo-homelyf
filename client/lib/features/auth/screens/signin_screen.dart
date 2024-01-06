@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:homelyf_services/common/widgets/custom_button.dart';
 import 'package:homelyf_services/common/widgets/custom_textfield.dart';
-import 'package:homelyf_services/features/auth/screens/forgot_password_rename.dart';
+import 'package:homelyf_services/features/auth/screens/forgot_password_Screen.dart';
 import 'package:homelyf_services/features/auth/screens/signup_screen.dart';
 import 'package:homelyf_services/features/auth/services/auth_service.dart';
 

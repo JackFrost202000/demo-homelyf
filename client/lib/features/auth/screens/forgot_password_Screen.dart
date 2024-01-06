@@ -126,17 +126,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                             child: Column(
                               children: [
                                 const Text(
-                                  'Forgot',
+                                  'Forgot Password',
                                   style: TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromARGB(255, 0, 145, 203),
-                                  ),
-                                ),
-                                const Text(
-                                  'Password',
-                                  style: TextStyle(
-                                    fontSize: 30,
+                                    fontSize: 28,
                                     fontWeight: FontWeight.bold,
                                     color: Color.fromARGB(255, 0, 145, 203),
                                   ),
@@ -279,7 +271,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                     return null;
                                   },
                                 ),
-                                SizedBox(height: 15),
+                                const SizedBox(height: 15),
                                 CustomTextField(
                                   visible: _isEmailVerified,
                                   controller: _confirmPasswordController,

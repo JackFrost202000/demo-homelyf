@@ -207,12 +207,12 @@ authRouter.post("/api/signup", async (req, res) => {
       });
     }
 
-
+    const hashedPassword = await bcryptjs.hash(password, 8);
 
     let user = new User({
       email,
       mobile,
-      password,
+      password: hashedPassword,
       name,
     });
     user = await user.save();
@@ -260,15 +260,12 @@ authRouter.post("/api/signin", async (req, res) => {
         .status(400)
         .json({ msg: "User with this email does not exist!" });
     }
-    console.log(user.password, password);
-    console.log(bcryptjs.decodeBase64(user.password, 10));
 
     const isMatch = await bcryptjs.compare(password, user.password);
-    console.log(isMatch);
     if (!isMatch) {
       return res.status(400).json({ msg: "Incorrect password." });
     }
-
+    console.log(process.env.JWT_KEY);
     const token = jwt.sign({ id: user._id }, process.env.JWT_KEY);
     res.json({ token, ...user._doc });
   } catch (e) {
