@@ -8,6 +8,7 @@ import 'package:homelyf_services/common/widgets/bottom_bar.dart';
 import 'package:homelyf_services/constants/error_handling.dart';
 import 'package:homelyf_services/constants/global_variables.dart';
 import 'package:homelyf_services/constants/utils.dart';
+import 'package:homelyf_services/features/admin/screens/admin_screen.dart';
 import 'package:homelyf_services/features/auth/screens/signin_screen.dart';
 import 'package:homelyf_services/models/user.dart';
 import 'package:homelyf_services/providers/user_provider.dart';
@@ -17,9 +18,10 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  Future<void> sendOTP(
+  Future<bool> sendOTP(
     BuildContext context,
     String email,
+    String mobile,
   ) async {
     try {
       http.Response res = await http.post(
@@ -27,17 +29,52 @@ class AuthService {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, String>{'email': email}),
+        body: jsonEncode(<String, String>{'email': email, 'mobile': mobile}),
       );
 
       final data = jsonDecode(res.body);
       if (res.statusCode == 200 && data != null) {
         showSnackBar(context, 'OTP sent successfully!');
+        return true;
+      } else if (res.statusCode == 400 && data != null) {
+        showSnackBar(context,
+            'User with same email or mobile no. already exists!\nTry using different email or mobile no.');
+        return false;
       } else {
-        showSnackBar(context, 'Failed to send OTP. hello');
+        showSnackBar(context, 'Failed to send OTP.');
+        return false;
       }
     } catch (e) {
       showSnackBar(context, e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> sendOTPForgotPassword(
+    BuildContext context,
+    String email,
+    String mobile,
+  ) async {
+    try {
+      http.Response res = await http.post(
+        Uri.parse('$uri/api/sendEmail-forgotPassword-otp'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{'email': email, 'mobile': mobile}),
+      );
+
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200 && data != null) {
+        showSnackBar(context, 'OTP sent successfully!');
+        return true;
+      } else {
+        showSnackBar(context, 'Failed to send OTP.');
+        return false;
+      }
+    } catch (e) {
+      showSnackBar(context, e.toString());
+      return false;
     }
   }
 
@@ -159,11 +196,21 @@ class AuthService {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           Provider.of<UserProvider>(context, listen: false).setUser(res.body);
           await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            BottomBar.routeName,
-            (route) => false,
-          );
+          if (prefs.getString('x-auth-token') != null &&
+              prefs.getString('x-auth-token')!.isNotEmpty) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    Provider.of<UserProvider>(context, listen: false)
+                                .user
+                                .type ==
+                            'user'
+                        ? const BottomBar()
+                        : const AdminScreen(),
+              ),
+            );
+          }
         },
       );
     } on SocketException catch (e) {
@@ -185,7 +232,7 @@ class AuthService {
   }
 
   // get user data
-  void getUserData(
+  Future<void> getUserData(
     BuildContext context,
   ) async {
     try {

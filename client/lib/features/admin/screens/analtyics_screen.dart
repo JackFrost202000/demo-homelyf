@@ -1,3 +1,4 @@
+import 'package:homelyf_services/common/widgets/custom_button.dart';
 import 'package:homelyf_services/common/widgets/loader.dart';
 import 'package:homelyf_services/features/account/services/account_services.dart';
 import 'package:homelyf_services/features/account/widgets/account_button.dart';
@@ -56,14 +57,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               //     ),
               //   ]),
               // ),
-              Container(
-                alignment: Alignment.center,
-                child: SizedBox(
+              SizedBox(
+                width: 200,
+                child: CustomButton(
+                  text: 'Log Out',
+                  onTap: () => AccountServices().logOut(context),
                   height: 30,
-                  child: AccountButton(
-                    text: 'Log Out',
-                    onTap: () => AccountServices().logOut(context),
-                  ),
                 ),
               ),
             ],

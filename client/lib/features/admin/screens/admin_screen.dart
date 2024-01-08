@@ -55,17 +55,20 @@ class _AdminScreenState extends State<AdminScreen> {
               //   ),
               // ),
               Text(
-                'homelyf_services',
+                'Homelyf Services',
                 style: TextStyle(
                   fontSize: 30,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
               ),
               Text(
                 'Admin',
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
+                ),
               ),
             ],
           ),

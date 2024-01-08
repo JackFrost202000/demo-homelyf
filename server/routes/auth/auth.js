@@ -57,14 +57,42 @@ authRouter.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
  *         description: Failed to send OTP
  */
 authRouter.post("/api/sendEmail-otp", async (req, res) => {
-  const { email } = req.body;
-
   try {
+    const { email, mobile } = req.body;
+    const existingUser = await User.findOne({
+      $or: [
+        { email: email },
+        { mobile: mobile }
+      ]
+
+    });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ msg: "User with same email or mobile already exists!" });
+    } else {
+      const OTP = generateOTP();
+      const otpBody = await otpVerification.create({ email: email, otp: OTP });
+      console.log(otpBody);
+
+      res.status(200).json({ msg: "OTP sent succesfully" })
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ msg: "Failed to send OTP." })
+  }
+});
+
+authRouter.post("/api/sendEmail-forgotPassword-otp", async (req, res) => {
+  try {
+    const { email, mobile } = req.body;
+
     const OTP = generateOTP();
-    const otpBody = await otpVerification.create({ email: email, otp: OTP });
+    const otpBody = await otpVerification.create({ email: email, mobile: mobile, otp: OTP });
     console.log(otpBody);
 
     res.status(200).json({ msg: "OTP sent succesfully" })
+
   } catch (error) {
     console.log(error);
     res.status(401).json({ msg: "Failed to send OTP." })

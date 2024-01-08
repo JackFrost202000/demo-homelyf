@@ -48,10 +48,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     );
   }
 
-  void sendOtp() {
-    authService.sendOTP(context, _emailController.text);
+  void sendOTPForgotPassword() async {
+    bool isOtpSent = await authService.sendOTPForgotPassword(
+        context, _emailController.text, _mobileController.text);
     setState(() {
-      _isOtpSent = true; // Set the flag to indicate OTP has been sent
+      _isOtpSent = isOtpSent; // Set the flag to indicate OTP has been sent
     });
   }
 
@@ -196,7 +197,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                             ),
                                             onPressed: () {
                                               if (_isEmailValid) {
-                                                sendOtp();
+                                                sendOTPForgotPassword();
                                               }
                                             },
                                           ),

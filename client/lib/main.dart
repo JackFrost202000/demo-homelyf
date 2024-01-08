@@ -1,4 +1,6 @@
 import 'package:homelyf_services/common/widgets/bottom_bar.dart';
+import 'package:homelyf_services/common/widgets/liquid_loader.dart';
+import 'package:homelyf_services/common/widgets/loader.dart';
 import 'package:homelyf_services/constants/global_variables.dart';
 import 'package:homelyf_services/features/admin/screens/admin_screen.dart';
 import 'package:homelyf_services/features/auth/screens/auth_screen.dart';
@@ -7,6 +9,7 @@ import 'package:homelyf_services/features/auth/services/auth_service.dart';
 import 'package:homelyf_services/providers/user_provider.dart';
 import 'package:homelyf_services/router.dart';
 import 'package:flutter/material.dart';
+import 'package:homelyf_services/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -52,11 +55,7 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true, // can remove this line
       ),
       onGenerateRoute: (settings) => generateRoute(settings),
-      home: Provider.of<UserProvider>(context).user.token.isNotEmpty
-          ? Provider.of<UserProvider>(context).user.type == 'user'
-              ? const BottomBar()
-              : const AdminScreen()
-          : const SignInScreen(),
+      home: SplashScreen(),
     );
   }
 }

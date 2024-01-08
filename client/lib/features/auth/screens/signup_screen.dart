@@ -51,10 +51,11 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
-  void sendOtp() {
-    authService.sendOTP(context, _emailController.text);
+  void sendOtp() async {
+    bool isOtpSent = await authService.sendOTP(
+        context, _emailController.text, _mobileController.text);
     setState(() {
-      _isOtpSent = true; // Set the flag to indicate OTP has been sent
+      _isOtpSent = isOtpSent; // Set the flag to indicate OTP has been sent
     });
   }
 

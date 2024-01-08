@@ -1,4 +1,7 @@
 ./server/node_modules
 /server/node_modules
 
+./.vscode
+/.vscode
+
 /client_web
