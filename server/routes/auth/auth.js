@@ -24,7 +24,7 @@ const options = {
     },
     servers: [
       {
-        url: 'https://homelyf-demo.onrender.com'
+        url: 'http://localhost:3000/'
       }
     ]
   },
@@ -55,15 +55,14 @@ authRouter.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
  *         description: OTP sent successfully
  *       401:
  *         description: Failed to send OTP
+ *       400:
+ *         description: User with same email or mobile already exists!
  */
 authRouter.post("/api/sendEmail-otp", async (req, res) => {
   try {
     const { email, mobile } = req.body;
     const existingUser = await User.findOne({
-      $or: [
-        { email: email },
-        { mobile: mobile }
-      ]
+      email: email
 
     });
     if (existingUser) {
